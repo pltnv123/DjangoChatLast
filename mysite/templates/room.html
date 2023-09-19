@@ -30,14 +30,14 @@
         </form>
     </div>
 
-<div class="lg:w-2/4 mt-6 mx-4 lg:mx-auto p-4 bg-white rounded-xl">
-    <h2 class="text-xl font-semibold">Online Users</h2>
-    <ul class="ml-4">
-        {% for user in online_users %}
-            <li>{{ user }}</li>
-        {% endfor %}
-    </ul>
-</div>
+    <div class="lg:w-2/4 mt-6 mx-4 lg:mx-auto p-4 bg-white rounded-xl">
+        <h2 class="text-xl font-semibold">Online Users</h2>
+        <ul class="ml-4">
+            {% for user in online_users %}
+                <li>{{ user }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 
 {% endblock %}
 
@@ -56,6 +56,12 @@
             + '/'
         );
 
+
+        setInterval(function () {
+            window.location.reload();
+        }, 30000); // reload every 30 seconds for reload online users
+
+
         chatSocket.onmessage = function (e) {
             e.preventDefault();
             const data = JSON.parse(e.data);
@@ -67,17 +73,24 @@
                 document.querySelector('#chat-messages').innerHTML += html;
 
                 scrollBottom();
+                window.location.reload();
+
             } else {
                 alert('The message was empty!');
+                {#window.location.reload();#}
             }
         };
 
         chatSocket.onclose = function (e) {
+            e.preventDefault();
             console.error('Chat socket closed unexpectedly');
+            {#window.location.reload();#}
+
         };
 
         document.querySelector('#chat-message-input').focus();
         document.querySelector('#chat-message-input').onkeyup = function (e) {
+            e.preventDefault();
             if (e.keyCode === 13) {  // enter, return
                 document.querySelector('#chat-message-submit').click();
             }
@@ -88,13 +101,16 @@
 
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message,
-                'username': username,
-                'room': roomName
-            }));
-            messageInputDom.value = '';
 
+            if (message.trim() !== '') { // Check if the message is not empty or only contains whitespace
+                chatSocket.send(JSON.stringify({
+                    'message': message,
+                    'username': username,
+                    'room': roomName
+                }));
+            }
+
+            messageInputDom.value = '';
             return false;
         };
 
