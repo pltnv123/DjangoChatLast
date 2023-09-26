@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow px-6 py-4">
+            <div class="flex items-center">
+                {% if user.profile.picture %}
+                    <img class="w-20 h-20 border rounded-full object-cover object-center mr-4" src="{{ user.profile.picture.url }}" alt="{{ user.username }}'s Profile Picture">
+                {% else %}
+                    <div class="w-20 h-20 border rounded-full bg-gray-300 flex items-center justify-center mr-4">
+                        <span class="text-gray-600 text-lg">{{ user.username|slice:":1" }}</span>
+                    </div>
+                {% endif %}
+                <div>
+                    <h2 class="text-xl font-bold">{{ user.username }}</h2>
+                    <p class="text-gray-600">Member since {{ user.date_joined|date:"F j, Y" }}</p>
+                    {% if request.user == user %}
+                        <a href="{% url 'edit_photo' %}" class="text-blue-500 underline">Add/Edit Photo</a>
+{#                        <a href="#" class="text-blue-500 underline">Add/Edit Photo</a>#}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

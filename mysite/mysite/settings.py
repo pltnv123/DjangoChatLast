@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'daphne',
     'channels',
     'channels_redis',
-    'chat',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,6 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'chat',
+    'accounts',
 ]
 
 MIDDLEWARE = [

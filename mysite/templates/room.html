@@ -22,7 +22,7 @@
                     <h2 class="text-xl font-semibold">Online Users</h2>
                     <ul>
                         {% for user in online_users %}
-                            <li>{{ user }}</li>
+                            <li><a href="{% url 'user_profile' user.username %}">{{ user }}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
