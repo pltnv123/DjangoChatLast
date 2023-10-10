@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 
+def user_directory_path(instance, filename):
+    return 'user_{0}/{1}'.format(instance.user.id, filename)
+
+
 class Room(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
@@ -24,7 +28,7 @@ class Message(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    picture = models.ImageField(upload_to='profile_pics', blank=True)
+    picture = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
 
     def __str__(self):
         return self.user.username

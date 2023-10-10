@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
@@ -6,8 +7,9 @@ import logging
 
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView
+from django.urls import reverse
 
-from .models import Room, Message
+from .models import Room, Message, Profile
 from .forms import CreateRoomForm, ProfilePictureForm
 
 
@@ -28,10 +30,13 @@ def room(request, room_name):
 
     return render(request, 'room.html', {'room': room, 'messages': messages, 'online_users': online_users})
 
-
 def user_profile(request, username):
     user = get_object_or_404(User, username=username)
-    return render(request, 'user_profile.html', {'user': user})
+
+    profile = Profile.objects.get(user=user)  # Получаем объект профиля для пользователя
+    picture = profile.picture if profile else None  # Получаем поле picture из профиля
+
+    return render(request, 'user_profile.html', {'user': user, 'picture': picture})
 
 
 class DeleteRoom(LoginRequiredMixin, DeleteView):
@@ -56,12 +61,20 @@ class CreateRoom(LoginRequiredMixin, CreateView):
 
 
 def edit_photo(request):
+    Profile = get_user_model().profile.related.related_model
+
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        profile = Profile.objects.create(user=request.user)
+
     if request.method == 'POST':
-        form = ProfilePictureForm(request.POST, request.FILES, instance=request.user.profile)
+        form = ProfilePictureForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('user_profile')
+
+            return redirect(reverse('user_profile', args=[request.user.username]))
     else:
-        form = ProfilePictureForm(instance=request.user.profile)
+        form = ProfilePictureForm(instance=profile)
 
     return render(request, 'edit_photo.html', {'form': form})
