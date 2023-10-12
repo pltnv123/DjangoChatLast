@@ -90,6 +90,19 @@ def edit_photo(request):
     return render(request, 'edit_photo.html', {'form': form})
 
 
+def edit_nickname(request):
+    user = request.user
+
+    if request.method == 'POST':
+        new_nickname = request.POST.get('nickname')
+        user.username = new_nickname
+        user.save()
+
+        return redirect(reverse('user_profile', args=[user.username]))
+    else:
+        return render(request, 'edit_nickname.html', {'user': user})
+
+
 ###################
 
 
