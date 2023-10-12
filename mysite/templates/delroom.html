@@ -7,7 +7,7 @@
             <br>
             <br>
             <hr>
-            <form action="{% url 'room_delete' room.pk %}" method="post" class="delete-form">
+            <form action="{% url 'room_delete' room.slug %}" method="post" class="delete-form">
                 {% csrf_token %}
                 <p>Вы действительно хотите удалить этот чат?</p>
                 <br>

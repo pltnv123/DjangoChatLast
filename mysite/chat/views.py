@@ -3,14 +3,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
-import logging
-
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView
 from django.urls import reverse
 
+from rest_framework import viewsets
+import logging
+
 from .models import Room, Message, Profile
 from .forms import CreateRoomForm, ProfilePictureForm
+
+from .serializers import RoomSerializer, MessageSerializer, ProfileSerializer
 
 
 @login_required
@@ -30,11 +33,16 @@ def room(request, room_name):
 
     return render(request, 'room.html', {'room': room, 'messages': messages, 'online_users': online_users})
 
+
 def user_profile(request, username):
     user = get_object_or_404(User, username=username)
 
-    profile = Profile.objects.get(user=user)  # Получаем объект профиля для пользователя
-    picture = profile.picture if profile else None  # Получаем поле picture из профиля
+    profile_query = Profile.objects.filter(user=user)
+    if profile_query.exists():
+        profile = profile_query.first()
+        picture = profile.picture
+    else:
+        picture = None
 
     return render(request, 'user_profile.html', {'user': user, 'picture': picture})
 
@@ -48,7 +56,9 @@ class DeleteRoom(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['room'] = self.get_object()
+        room = self.get_object()
+        context['room'] = room
+        print(room.slug)  # Здесь "value" - это атрибут объекта комнаты, который вы хотите вывести
         return context
 
     def get_success_url(self):
@@ -78,3 +88,21 @@ def edit_photo(request):
         form = ProfilePictureForm(instance=profile)
 
     return render(request, 'edit_photo.html', {'form': form})
+
+
+###################
+
+
+class RoomViewSet(viewsets.ModelViewSet):
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializer
+
+
+class MessageViewSet(viewsets.ModelViewSet):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer

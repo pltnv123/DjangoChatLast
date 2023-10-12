@@ -10,7 +10,7 @@ def user_directory_path(instance, filename):
 class Room(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
-    users = models.ManyToManyField(User, related_name='room_users')
+    users = models.ManyToManyField(User, related_name='room_users', blank=True, default=None)
 
     def get_absolute_url(self):
         return reverse('room', kwargs={'room_name': self.slug})
