@@ -7,15 +7,19 @@
 1. Клонируйте репозиторий на локальную машину:
 
 git clone https://github.com/pltnv123/DjangoChatLast.git
+
 2. Установите зависимости проекта:
 
 pip install -r requirements.txt
+
 3. Примените миграции базы данных:
 
 python manage.py migrate
+
 4. Создайте суперпользователя (по желанию):
 
 python manage.py createsuperuser
+
 5. Запустите сервер разработки:
 
 python manage.py runserver
