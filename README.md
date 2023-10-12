@@ -6,7 +6,7 @@
 # Установка и запуск
 1. Клонируйте репозиторий на локальную машину:
 
-git clone https://github.com/your/repository.git
+git clone https://github.com/pltnv123/DjangoChatLast.git
 2. Установите зависимости проекта:
 
 pip install -r requirements.txt
